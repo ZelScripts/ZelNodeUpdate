@@ -6,6 +6,8 @@
 
 #wallet information
 COIN_NAME='zelcash'
+WALLET_DOWNLOAD='https://zelcore.io/linux.zip'
+WALLET_ZIP_FILE='linux.zip'
 ZIPTAR='unzip'
 CONFIG_FILE='zelcash.conf'
 PORT=16125
@@ -54,37 +56,10 @@ echo -e "\033[1;33m=======================================================\033[0
 echo "Updating your OS..."
 echo -e "\033[1;33m=======================================================\033[0m"
 echo "Installing package updates..."
-#adding ZelCash APT Repo
-echo 'deb https://zelcash.github.io/aptrepo/ all main' | sudo tee --append /etc/apt/sources.list.d/zelcash.list > /dev/null
-gpg --keyserver keyserver.ubuntu.com --recv 4B69CA27A986265D > /dev/null
-gpg --export 4B69CA27A986265D | sudo apt-key add -
 sudo apt-get update -y
 sudo apt-get upgrade -y
 echo -e "\033[1;32mLinux Packages Updates complete...\033[0m"
 sleep 2
-#Setup log rotation
-echo -e "\n\033[1;33mConfiguring log rotate function...\033[0m"
-sleep 1
-if [ -f /etc/logrotate.d/zeldebuglog ]; then
-    echo -e "\033[1;36mExisting log rotate conf found, backing up to ~/zeldebuglogrotate.old ...\033[0m"
-    sudo mv /etc/logrotate.d/zeldebuglog ~/zeldebuglogrotate.old;
-    sleep 2
-fi
-touch /home/$USERNAME/zeldebuglog
-cat <<EOM > /home/$USERNAME/zeldebuglog
-/home/$USERNAME/.zelcash/debug.log {
-    compress
-    copytruncate
-    missingok
-    daily
-    rotate 7
-}
-EOM
-cat /home/$USERNAME/zeldebuglog | sudo tee -a /etc/logrotate.d/zeldebuglog > /dev/null
-rm /home/$USERNAME/zeldebuglog
-sudo logrotate --force /etc/logrotate.d/zeldebuglog
-echo -e "\n\033[1;32mLog rotate configuration complete.\n~/.zelcash/debug.log file will be backed up daily for 7 days then rotated.\033[0m"
-sleep 5
 
 #Closing zelcash daemon
 echo -e "\033[1;33mStopping & removing all old instances of $COIN_NAME and Downloading new wallet...\033[0m"
@@ -98,7 +73,8 @@ sudo rm /usr/bin/zelcash* > /dev/null 2>&1 && sleep 2
 echo -e "\033[1;33mUpdating new wallet binaries...\033[0m"
 
 #Install zelcash files using APT
-sudo apt-get install zelcash -y
+wget -U Mozilla/5.0 $WALLET_DOWNLOAD
+unzip $WALLET_ZIP_FILE -d $COIN_PATH
 sudo chmod 755 /usr/local/bin/zelcash*
 sudo chown -R $USERNAME:$USERNAME /home/$USERNAME
 cd
