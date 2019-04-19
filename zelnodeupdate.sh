@@ -57,7 +57,7 @@ if [ -f /etc/apt/sources.list.d/zelcash.list ]; then
     sudo mv /etc/apt/sources.list.d/zelcash.list ~/zelcash.list.old;
     sleep 2
 fi
-echo 'deb https://zelcash.github.io/aptrepo/ all main' | sudo tee --append /etc/apt/sources.list.d/zelcash.list > /dev/null
+echo 'deb https://apt.zel.cash/ all main' | sudo tee --append /etc/apt/sources.list.d/zelcash.list > /dev/null
 gpg --keyserver keyserver.ubuntu.com --recv 4B69CA27A986265D > /dev/null
 gpg --export 4B69CA27A986265D | sudo apt-key add -
 sudo apt-get update -y
